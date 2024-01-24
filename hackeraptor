@@ -4,10 +4,24 @@ import argparse
 
 from backend.revshell import revshell
 from backend.scan import scan
+from backend.webfuzz import webfuzz
 
 parser = argparse.ArgumentParser(   prog="hackeraptor",
                                     description="All-in-one hacking tool" )
 subparsers = parser.add_subparsers(help="main command")
+
+subparser = subparsers.add_parser("webfuzz", help="fuzz a web request")
+subparser.set_defaults(func=webfuzz)
+subparser.add_argument("-u", "--url", help="URL to fuzz")
+subparser.add_argument("-w", "--wordlists", help="wordlist(s) -- $n variable in the request is replaced by a word from the n-th list", nargs="+")
+subparser.add_argument("-H", "--headers", help="add a header", nargs="*")
+subparser.add_argument("-m", "--method", help="method", default="GET")
+subparser.add_argument("-d", "--data", help="body request content")
+subparser.add_argument("--no-verify", help="disable ssl cert verification", action="store_false")
+subparser.add_argument("--sizes", help="accepted sizes", nargs="*", default=[],)
+subparser.add_argument("--no-sizes", help="refused sizes", nargs="*", default=[0])
+subparser.add_argument("--status-codes", help="accepted status codes", nargs="*", default=[200])
+subparser.add_argument("--no-status-codes", help="refused status codes", nargs="*", default=[404])
 
 subparser = subparsers.add_parser("revshell", help="scan ports")
 subparser.set_defaults(func=revshell)
